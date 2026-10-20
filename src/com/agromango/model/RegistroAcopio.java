@@ -1,3 +1,5 @@
+package com.agromango.model;
+
 // Clase principal que implementa los Requisitos Funcionales (RF-01, RF-02, RF-03)
 public class RegistroAcopio {
     private int id;

@@ -32,7 +32,7 @@
 
 ## 05. Instrucciones de Ejecución
 1. Requisitos: JDK Java 27 y Visual Studio Code.
-2. Compilación e inicio desde la terminal:
+2. Compilación e inicio desde PowerShell, en la raíz del proyecto:
    ```bash
-   javac src/*.java -d bin
-   java -cp bin Main
+   javac -d bin -sourcepath src src\com\agromango\app\Main.java src\com\agromango\app\App.java
+   java -cp bin com.agromango.app.Main

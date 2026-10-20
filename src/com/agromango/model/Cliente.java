@@ -1,3 +1,5 @@
+package com.agromango.model;
+
 // Entidad Cliente/Productor para el acopio de mango
 public class Cliente {
     private int id;

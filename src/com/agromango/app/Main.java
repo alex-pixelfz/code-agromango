@@ -1,3 +1,8 @@
+package com.agromango.app;
+
+import com.agromango.model.Cliente;
+import com.agromango.model.RegistroAcopio;
+
 // Punto de entrada principal para probar el MVP
 public class Main {
     public static void main(String[] args) {
