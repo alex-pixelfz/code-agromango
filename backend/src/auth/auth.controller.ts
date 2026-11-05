@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import type { UsuarioRegistrado } from './auth.service.js';
 import { AuthService } from './auth.service.js';
 
@@ -11,5 +11,13 @@ export class AuthController {
     @Body() datos: { usuario?: unknown; contrasena?: unknown } | null,
   ): Promise<UsuarioRegistrado> {
     return this.authService.register(datos);
+  }
+
+  @Post('login')
+  @HttpCode(200)
+  login(
+    @Body() datos: { usuario?: unknown; contrasena?: unknown } | null,
+  ): Promise<{ access_token: string }> {
+    return this.authService.login(datos);
   }
 }

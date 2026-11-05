@@ -1,5 +1,12 @@
-import { BadRequestException, ConflictException, Injectable } from '@nestjs/common';
-import { hash } from 'bcryptjs';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { randomBytes } from 'node:crypto';
+import { compare, hash } from 'bcryptjs';
 
 interface UsuarioGuardado {
   id: number;
@@ -16,6 +23,9 @@ export interface UsuarioRegistrado {
 export class AuthService {
   private readonly usuarios: UsuarioGuardado[] = [];
   private siguienteId = 1;
+  private readonly hashFalso = hash(randomBytes(32).toString('hex'), 10);
+
+  constructor(private readonly jwtService: JwtService) {}
 
   async register(
     datos: { usuario?: unknown; contrasena?: unknown } | null,
@@ -57,5 +67,35 @@ export class AuthService {
     this.usuarios.push(registro);
 
     return { id: registro.id, usuario: registro.usuario };
+  }
+
+  async login(
+    datos: { usuario?: unknown; contrasena?: unknown } | null,
+  ): Promise<{ access_token: string }> {
+    if (typeof datos?.usuario !== 'string' || datos.usuario.trim() === '') {
+      throw new BadRequestException('El usuario es obligatorio');
+    }
+    if (typeof datos.contrasena !== 'string' || datos.contrasena.length === 0) {
+      throw new BadRequestException('La contraseña es obligatoria');
+    }
+
+    const usuario = datos.usuario.trim();
+    const registro = this.usuarios.find(
+      (item) => item.usuario.toLowerCase() === usuario.toLowerCase(),
+    );
+    const contrasenaValida = await compare(
+      datos.contrasena,
+      registro?.contrasenaHash ?? (await this.hashFalso),
+    );
+
+    if (!registro || !contrasenaValida) {
+      throw new UnauthorizedException('Usuario o contraseña incorrectos');
+    }
+
+    const access_token = await this.jwtService.signAsync({
+      sub: registro.id,
+      usuario: registro.usuario,
+    });
+    return { access_token };
   }
 }
