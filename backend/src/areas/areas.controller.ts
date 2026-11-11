@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../auth/auth.guard.js';
 import type { Area } from './areas.service.js';
 import { AreasService } from './areas.service.js';
 
 @Controller('areas')
+@UseGuards(AuthGuard)
 export class AreasController {
   constructor(private readonly areasService: AreasService) {}
 
