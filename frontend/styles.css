@@ -1,0 +1,146 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #17251b;
+  background: #f7f8f2;
+  font-size: 18px;
+  line-height: 1.5;
+  --green: #245c3b;
+  --green-dark: #17432a;
+  --mango: #ffd447;
+  --white: #fff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 16px;
+}
+
+.page {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+
+.page-header {
+  margin: 12px 0 24px;
+  text-align: center;
+}
+
+.brand {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--mango);
+  color: var(--green);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+h1 {
+  margin: 0 0 8px;
+  color: var(--green-dark);
+  font-size: clamp(1.7rem, 8vw, 2.2rem);
+  line-height: 1.15;
+}
+
+.intro {
+  margin: 0;
+}
+
+.forms {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.card {
+  padding: 22px;
+  border: 1px solid #d6dfd5;
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: 0 4px 16px #173a2510;
+}
+
+h2 {
+  margin: 0 0 18px;
+  color: var(--green-dark);
+  font-size: 1.35rem;
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+label {
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 12px;
+  border: 2px solid #69766b;
+  border-radius: 8px;
+  background: var(--white);
+  color: #17251b;
+  font: inherit;
+}
+
+input:focus-visible,
+button:focus-visible {
+  outline: 3px solid #a76a00;
+  outline-offset: 2px;
+}
+
+button {
+  min-height: 52px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--green);
+  color: var(--white);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--green-dark);
+}
+
+.message {
+  min-height: 1.5em;
+  margin: 18px 4px 0;
+  color: var(--green-dark);
+  font-weight: 700;
+  text-align: center;
+}
+
+.message-error {
+  color: #a32121;
+}
+
+@media (min-width: 760px) {
+  body {
+    padding-top: 48px;
+  }
+
+  .page {
+    width: min(100%, 900px);
+  }
+
+  .forms {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#245c3b">
+    <title>MangoNota | Cuenta</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <p class="brand">🥭 MangoNota</p>
+        <h1>Tu cuenta de mango, clara y sencilla</h1>
+        <p class="intro">Crea tu cuenta o inicia sesión para continuar.</p>
+      </header>
+
+      <div class="forms">
+        <section class="card" aria-labelledby="register-title">
+          <h2 id="register-title">Crear cuenta</h2>
+          <form id="register-form">
+            <label for="register-usuario">Usuario</label>
+            <input id="register-usuario" name="usuario" type="text" minlength="3" autocomplete="username" required>
+
+            <label for="register-contrasena">Contraseña</label>
+            <input id="register-contrasena" name="contrasena" type="password" minlength="8" autocomplete="new-password" required>
+
+            <button type="submit">Crear cuenta</button>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="login-title">
+          <h2 id="login-title">Iniciar sesión</h2>
+          <form id="login-form">
+            <label for="login-usuario">Usuario</label>
+            <input id="login-usuario" name="usuario" type="text" autocomplete="username" required>
+
+            <label for="login-contrasena">Contraseña</label>
+            <input id="login-contrasena" name="contrasena" type="password" autocomplete="current-password" required>
+
+            <button type="submit">Entrar</button>
+          </form>
+        </section>
+      </div>
+
+      <p id="mensaje" class="message" role="status" aria-live="polite"></p>
+    </main>
+  </body>
+</html>
