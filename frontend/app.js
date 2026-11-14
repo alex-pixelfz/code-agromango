@@ -7,6 +7,12 @@ function showMessage(text, isError = false) {
   message.classList.toggle('message-error', isError);
 }
 
+const savedMessage = sessionStorage.getItem('auth_message');
+if (savedMessage) {
+  showMessage(savedMessage, true);
+  sessionStorage.removeItem('auth_message');
+}
+
 async function getResponseMessage(response, fallback) {
   try {
     const data = await response.json();

@@ -6,16 +6,38 @@
     <meta name="theme-color" content="#245c3b">
     <title>MangoNota | Áreas</title>
     <link rel="stylesheet" href="styles.css">
-    <script>
-      if (!sessionStorage.getItem('access_token')) {
-        window.location.replace('index.html');
-      }
-    </script>
+    <script src="areas.js" defer></script>
   </head>
   <body>
-    <main class="page card">
-      <h1>Áreas</h1>
-      <p>Sesión iniciada</p>
+    <main class="page">
+      <header class="page-header">
+        <p class="brand">🥭 MangoNota</p>
+        <h1>Áreas</h1>
+        <p class="intro">Sesión iniciada</p>
+      </header>
+
+      <section class="card" aria-labelledby="create-area-title">
+        <h2 id="create-area-title">Crear área</h2>
+        <form id="area-form">
+          <label for="area-nombre">Nombre</label>
+          <input id="area-nombre" name="nombre" type="text" required>
+
+          <label class="checkbox-label" for="area-activa">
+            <input id="area-activa" name="activa" type="checkbox" checked>
+            Activa
+          </label>
+
+          <button type="submit">Crear área</button>
+        </form>
+      </section>
+
+      <section class="area-list-section" aria-labelledby="area-list-title">
+        <h2 id="area-list-title">Mis áreas</h2>
+        <ul id="area-list" class="area-list"></ul>
+      </section>
+
+      <p id="areas-message" class="message" role="status" aria-live="polite"></p>
+      <button id="logout-button" class="button-secondary" type="button">Cerrar sesión</button>
     </main>
   </body>
 </html>
