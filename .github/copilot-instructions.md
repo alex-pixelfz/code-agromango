@@ -22,13 +22,22 @@ Construir un backend en NestJS (JavaScript/TypeScript) según la guía del semin
 - Nunca borres archivos, ni uses comandos destructivos de git. Muestra `git status` antes de cada commit y NO hagas `git push` sin confirmación.
 - Verifica con `node -v` y `npm -v` antes de instalar nada.
 
-## Al terminar cada tarea, responde con este formato
+## Al terminar cada tarea, responde con un reporte breve y unificado
+
+El reporte es un resumen para Claude, no una bitácora: apunta a menos de 150 palabras. No copies salidas completas de comandos, registros del servidor, código ni diffs. No crees un archivo de reporte salvo que la persona lo pida expresamente. Se aplican estas excepciones:
+
+1. **Errores:** siempre copia el error tal cual, hasta un máximo de 10 líneas.
+2. **Pruebas:** preséntalas en una tabla compacta, una línea por prueba e incluye su código HTTP.
+3. **“Muéstrame”:** si la tarea dice “muéstrame”, esa instrucción prevalece sobre el límite de palabras.
+
+Usa este formato y omite los campos que no correspondan:
+
 REPORTE PARA CLAUDE
-- Archivos creados o modificados:
-- Comandos ejecutados y su salida (copiada tal cual):
-- Errores o advertencias (copiados tal cual):
-- Resultado de las pruebas (GET/POST):
-- Siguiente paso sugerido:
+- **Resumen:** qué quedó hecho.
+- **Archivos:** solo los principales, agrupados por propósito si son varios.
+- **Verificación:** comandos importantes y resultado resumido; presenta las pruebas en una tabla compacta, una línea por prueba e incluye el código HTTP.
+- **Errores o bloqueos:** solo si ocurrieron; copia literalmente el mensaje, máximo 10 líneas.
+- **Siguiente paso:** una acción concreta, o “Ninguno”.
 
 ## graphify
 
