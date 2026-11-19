@@ -9,12 +9,10 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'node:crypto';
 import { compare, hash } from 'bcryptjs';
-
-interface UsuarioGuardado {
-  id: number;
-  usuario: string;
-  contrasenaHash: string;
-}
+import {
+  StorageService,
+  UsuarioAlmacenado,
+} from '../storage/storage.service.js';
 
 interface IntentosInicioSesion {
   fallidos: number;
@@ -50,12 +48,16 @@ export class LoginBloqueadoException extends HttpException {
 
 @Injectable()
 export class AuthService {
-  private readonly usuarios: UsuarioGuardado[] = [];
-  private siguienteId = 1;
   private readonly hashFalso = hash(randomBytes(32).toString('hex'), 10);
-  private readonly intentosInicioSesion = new Map<string, IntentosInicioSesion>();
+  private readonly intentosInicioSesion = new Map<
+    string,
+    IntentosInicioSesion
+  >();
 
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly storageService: StorageService,
+  ) {}
 
   async register(
     datos: { usuario?: unknown; contrasena?: unknown } | null,
@@ -66,37 +68,50 @@ export class AuthService {
 
     const usuario = datos.usuario.trim();
     if (usuario.length < 3) {
-      throw new BadRequestException('El usuario debe tener al menos 3 caracteres');
+      throw new BadRequestException(
+        'El usuario debe tener al menos 3 caracteres',
+      );
     }
 
     if (typeof datos.contrasena !== 'string' || datos.contrasena.length === 0) {
       throw new BadRequestException('La contraseña es obligatoria');
     }
     if (datos.contrasena.length < 8) {
-      throw new BadRequestException('La contraseña debe tener al menos 8 caracteres');
+      throw new BadRequestException(
+        'La contraseña debe tener al menos 8 caracteres',
+      );
     }
 
-    const usuarioExiste = () =>
-      this.usuarios.some(
-        (registro) => registro.usuario.toLowerCase() === usuario.toLowerCase(),
-      );
-    if (usuarioExiste()) {
+    const usuarioNormalizado = usuario.toLowerCase();
+    if (
+      this.storageService
+        .leer()
+        .usuarios.some(
+          (registro) => registro.usuarioNormalizado === usuarioNormalizado,
+        )
+    ) {
       throw new ConflictException('El usuario ya existe');
     }
 
     const contrasenaHash = await hash(datos.contrasena, 10);
-    if (usuarioExiste()) {
-      throw new ConflictException('El usuario ya existe');
-    }
+    return this.storageService.actualizar((datosGuardados) => {
+      if (
+        datosGuardados.usuarios.some(
+          (registro) => registro.usuarioNormalizado === usuarioNormalizado,
+        )
+      ) {
+        throw new ConflictException('El usuario ya existe');
+      }
 
-    const registro: UsuarioGuardado = {
-      id: this.siguienteId++,
-      usuario,
-      contrasenaHash,
-    };
-    this.usuarios.push(registro);
-
-    return { id: registro.id, usuario: registro.usuario };
+      const registro: UsuarioAlmacenado = {
+        id: datosGuardados.contadores.usuario++,
+        usuario,
+        usuarioNormalizado,
+        contrasenaHash,
+      };
+      datosGuardados.usuarios.push(registro);
+      return { id: registro.id, usuario: registro.usuario };
+    });
   }
 
   async login(
@@ -120,9 +135,10 @@ export class AuthService {
       throw this.errorDeBloqueo(intentos.bloqueadoHasta - ahora);
     }
 
-    const registro = this.usuarios.find(
-      (item) => item.usuario.toLowerCase() === usuario.toLowerCase(),
-    );
+    const usuarioNormalizado = usuario.toLowerCase();
+    const registro = this.storageService
+      .leer()
+      .usuarios.find((item) => item.usuarioNormalizado === usuarioNormalizado);
     const contrasenaValida = await compare(
       datos.contrasena,
       registro?.contrasenaHash ?? (await this.hashFalso),
@@ -134,7 +150,10 @@ export class AuthService {
     }
 
     if (!registro || !contrasenaValida) {
-      const fallidos = Math.min((intentos?.fallidos ?? 0) + 1, LOGIN_MAX_INTENTOS);
+      const fallidos = Math.min(
+        (intentos?.fallidos ?? 0) + 1,
+        LOGIN_MAX_INTENTOS,
+      );
       const actualizadoEn = Date.now();
       const nuevoIntento: IntentosInicioSesion = { fallidos, actualizadoEn };
 
@@ -163,17 +182,27 @@ export class AuthService {
   private limpiarIntentosAntiguos(ahora: number): void {
     for (const [clave, intentos] of this.intentosInicioSesion) {
       const bloqueoVencido =
-        intentos.bloqueadoHasta !== undefined && intentos.bloqueadoHasta <= ahora;
-      const inactivoPorMuchoTiempo = ahora - intentos.actualizadoEn >= LOGIN_BLOQUEO_MS;
+        intentos.bloqueadoHasta !== undefined &&
+        intentos.bloqueadoHasta <= ahora;
+      const inactivoPorMuchoTiempo =
+        ahora - intentos.actualizadoEn >= LOGIN_BLOQUEO_MS;
       if (bloqueoVencido || inactivoPorMuchoTiempo) {
         this.intentosInicioSesion.delete(clave);
       }
     }
   }
 
-  private errorDeBloqueo(milisegundosRestantes: number): LoginBloqueadoException {
-    const minutosRestantes = Math.max(1, Math.ceil(milisegundosRestantes / 60000));
-    const segundosRestantes = Math.max(1, Math.ceil(milisegundosRestantes / 1000));
+  private errorDeBloqueo(
+    milisegundosRestantes: number,
+  ): LoginBloqueadoException {
+    const minutosRestantes = Math.max(
+      1,
+      Math.ceil(milisegundosRestantes / 60000),
+    );
+    const segundosRestantes = Math.max(
+      1,
+      Math.ceil(milisegundosRestantes / 1000),
+    );
     const unidadTiempo = minutosRestantes === 1 ? 'minuto' : 'minutos';
     return new LoginBloqueadoException(
       `Demasiados intentos fallidos. Espera ${minutosRestantes} ${unidadTiempo} e inténtalo de nuevo`,

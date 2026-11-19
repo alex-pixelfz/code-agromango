@@ -19,11 +19,15 @@ type RequestAutenticado = Request & { user: { sub: number } };
 
 function leerId(valor: string): number {
   if (!/^\d+$/.test(valor)) {
-    throw new BadRequestException('El id debe ser un número entero positivo válido');
+    throw new BadRequestException(
+      'El id debe ser un número entero positivo válido',
+    );
   }
   const id = Number(valor);
   if (!Number.isSafeInteger(id) || id < 1) {
-    throw new BadRequestException('El id debe ser un número entero positivo válido');
+    throw new BadRequestException(
+      'El id debe ser un número entero positivo válido',
+    );
   }
   return id;
 }
@@ -58,7 +62,7 @@ export class ClientesController {
   create(
     @Req() request: RequestAutenticado,
     @Body() datos: unknown,
-  ): Cliente {
+  ): Promise<Cliente> {
     return this.clientesService.create(request.user.sub, datos);
   }
 
@@ -67,7 +71,7 @@ export class ClientesController {
     @Req() request: RequestAutenticado,
     @Param('id') id: string,
     @Body() datos: unknown,
-  ): Cliente {
+  ): Promise<Cliente> {
     return this.clientesService.update(request.user.sub, leerId(id), datos);
   }
 }

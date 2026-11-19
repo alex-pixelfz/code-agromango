@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import {
+  ClienteAlmacenado,
+  StorageService,
+} from '../storage/storage.service.js';
 
-export interface Cliente {
-  id: number;
-  usuarioId: number;
-  nombre: string;
-  telefono?: string;
-  vereda?: string;
-  activo: boolean;
-  creadoEn: string;
-}
+export type Cliente = ClienteAlmacenado;
 
 type DatosCliente = Record<string, unknown>;
 
@@ -25,8 +25,7 @@ function normalizarTexto(texto: string): string {
 
 @Injectable()
 export class ClientesService {
-  private readonly clientes: Cliente[] = [];
-  private siguienteId = 1;
+  constructor(private readonly storageService: StorageService) {}
 
   findAll(
     usuarioId: number,
@@ -36,7 +35,7 @@ export class ClientesService {
     const termino = buscar?.trim() ? normalizarTexto(buscar.trim()) : undefined;
     const mostrarInactivos = incluirInactivos?.toLowerCase() === 'true';
 
-    return this.clientes.filter((cliente) => {
+    return this.storageService.leer().clientes.filter((cliente) => {
       if (cliente.usuarioId !== usuarioId) {
         return false;
       }
@@ -48,44 +47,48 @@ export class ClientesService {
   }
 
   findOne(usuarioId: number, id: number): Cliente {
-    const cliente = this.clientes.find(
-      (item) => item.id === id && item.usuarioId === usuarioId,
-    );
+    const cliente = this.storageService
+      .leer()
+      .clientes.find((item) => item.id === id && item.usuarioId === usuarioId);
     if (!cliente) {
       throw new NotFoundException('Cliente no encontrado');
     }
     return cliente;
   }
 
-  create(usuarioId: number, entrada: unknown): Cliente {
+  create(usuarioId: number, entrada: unknown): Promise<Cliente> {
     const datos = this.validarObjeto(entrada);
     const nombre = this.validarNombre(datos.nombre);
-    const activo = tieneCampo(datos, 'activo') ? this.validarActivo(datos.activo) : true;
+    const activo = tieneCampo(datos, 'activo')
+      ? this.validarActivo(datos.activo)
+      : true;
     const telefono = tieneCampo(datos, 'telefono')
       ? this.validarTelefono(datos.telefono)
       : undefined;
     const vereda = tieneCampo(datos, 'vereda')
       ? this.validarVereda(datos.vereda)
       : undefined;
-    const cliente: Cliente = {
-      id: this.siguienteId,
-      usuarioId,
-      nombre,
-      activo,
-      creadoEn: new Date().toISOString(),
-    };
+    return this.storageService.actualizar((datosGuardados) => {
+      const cliente: Cliente = {
+        id: datosGuardados.contadores.cliente++,
+        usuarioId,
+        nombre,
+        activo,
+        creadoEn: new Date().toISOString(),
+      };
 
-    if (telefono !== undefined) cliente.telefono = telefono;
-    if (vereda !== undefined) cliente.vereda = vereda;
-    this.clientes.push(cliente);
-    this.siguienteId++;
-    return cliente;
+      if (telefono !== undefined) cliente.telefono = telefono;
+      if (vereda !== undefined) cliente.vereda = vereda;
+      datosGuardados.clientes.push(cliente);
+      return cliente;
+    });
   }
 
-  update(usuarioId: number, id: number, entrada: unknown): Cliente {
-    const cliente = this.findOne(usuarioId, id);
+  update(usuarioId: number, id: number, entrada: unknown): Promise<Cliente> {
     const datos = this.validarObjeto(entrada);
-    const cambios: Partial<Pick<Cliente, 'nombre' | 'telefono' | 'vereda' | 'activo'>> = {};
+    const cambios: Partial<
+      Pick<Cliente, 'nombre' | 'telefono' | 'vereda' | 'activo'>
+    > = {};
 
     if (tieneCampo(datos, 'nombre')) {
       cambios.nombre = this.validarNombre(datos.nombre);
@@ -100,8 +103,16 @@ export class ClientesService {
       cambios.activo = this.validarActivo(datos.activo);
     }
 
-    Object.assign(cliente, cambios);
-    return cliente;
+    return this.storageService.actualizar((datosGuardados) => {
+      const cliente = datosGuardados.clientes.find(
+        (item) => item.id === id && item.usuarioId === usuarioId,
+      );
+      if (!cliente) {
+        throw new NotFoundException('Cliente no encontrado');
+      }
+      Object.assign(cliente, cambios);
+      return cliente;
+    });
   }
 
   private validarObjeto(entrada: unknown): DatosCliente {
@@ -121,7 +132,9 @@ export class ClientesService {
     }
     const nombre = valor.trim();
     if (nombre.length < 2 || nombre.length > 80) {
-      throw new BadRequestException('El nombre debe tener entre 2 y 80 caracteres');
+      throw new BadRequestException(
+        'El nombre debe tener entre 2 y 80 caracteres',
+      );
     }
     return nombre;
   }
@@ -143,18 +156,24 @@ export class ClientesService {
 
   private validarVereda(valor: unknown): string {
     if (typeof valor !== 'string') {
-      throw new BadRequestException('La vereda debe ser un texto de máximo 60 caracteres');
+      throw new BadRequestException(
+        'La vereda debe ser un texto de máximo 60 caracteres',
+      );
     }
     const vereda = valor.trim();
     if (vereda.length > 60) {
-      throw new BadRequestException('La vereda no puede superar los 60 caracteres');
+      throw new BadRequestException(
+        'La vereda no puede superar los 60 caracteres',
+      );
     }
     return vereda;
   }
 
   private validarActivo(valor: unknown): boolean {
     if (typeof valor !== 'boolean') {
-      throw new BadRequestException('El campo activo debe ser verdadero o falso');
+      throw new BadRequestException(
+        'El campo activo debe ser verdadero o falso',
+      );
     }
     return valor;
   }

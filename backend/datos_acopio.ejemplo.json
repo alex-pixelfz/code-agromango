@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "usuarios": [],
+  "clientes": [],
+  "contadores": {
+    "usuario": 1,
+    "cliente": 1
+  }
+}
