@@ -47,3 +47,6 @@ source files when (a) modifying/debugging specific code, (b) the graph lacks the
 (c) the graph is missing or stale.
 
 Type `/graphify` in Copilot Chat to build or update the graph.
+
+- Nunca detengas procesos con Stop-Process usando números de PID recordados de tareas anteriores. Detén solo los procesos que tú arrancaste en esta misma tarea, con la sesión de terminal que los lanzó.
+- Las variables de prueba (DATOS_ARCHIVO, JWT_SECRET, PORT) se definen solo para el proceso que las necesita y se eliminan al terminar; no las dejes puestas en la terminal.
