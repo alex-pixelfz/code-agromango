@@ -2,7 +2,7 @@
 
 MangoNota es un cuaderno digital para acopiadores de mango. Busca ayudar a llevar con claridad los datos de los productores y, en las siguientes etapas, las entregas de mango, los pagos y las canastillas. Reemplaza parte de las anotaciones que hoy se hacen en cuadernos de papel y pueden perderse o tener errores.
 
-> **Estado actual:** la aplicación guarda usuarios y clientes en un archivo JSON local. Todavía no usa PostgreSQL. La web actual es una página sencilla de registro, inicio de sesión y práctica de áreas; aún no tiene pantallas para administrar clientes.
+> **Estado actual:** la aplicación guarda usuarios y clientes en un archivo JSON local. La web actual es una página sencilla de registro, inicio de sesión y práctica de áreas; aún no tiene pantallas para administrar clientes.
 
 ## Requisitos
 
@@ -37,6 +37,8 @@ El backend crea ese archivo al arrancar si todavía no existe. También guarda a
 
 Para guardar una copia, haz doble clic en `respaldar.bat`. Copia el archivo JSON a `Documentos\MangoNota-respaldos` con fecha y hora en el nombre. También puedes copiar `datos_acopio.json` a una memoria USB. Mantén las copias en un lugar privado.
 
+Si tu carpeta Documentos se sincroniza con OneDrive u otra nube, las copias de respaldo también se subirán allí; cámbialas de lugar si no quieres eso.
+
 ## Qué funciona hoy
 
 - **Registro e inicio de sesión** desde la página web. Las contraseñas se guardan protegidas mediante hash y el inicio de sesión limita los intentos fallidos.
@@ -46,7 +48,7 @@ Para guardar una copia, haz doble clic en `respaldar.bat`. Copia el archivo JSON
 
 ## Qué falta
 
-Todavía no están implementados el registro de entregas de mango, los abonos, las devoluciones de canastillas, los saldos ni los comprobantes por WhatsApp. La aplicación tampoco funciona sin conexión: el navegador necesita poder conectarse al servidor local.
+Todavía no están implementados el registro de entregas de mango, los abonos, las devoluciones de canastillas, los saldos ni los comprobantes por WhatsApp. MangoNota funciona sin internet en el computador donde está instalado (después de la primera instalación). Todavía no hay una versión para usar directamente en un celular.
 
 ## Rutas de la API
 

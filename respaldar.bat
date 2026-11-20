@@ -4,14 +4,14 @@ setlocal
 
 set "ORIGEN=%~dp0backend\data\datos_acopio.json"
 if not exist "%ORIGEN%" (
-    echo No se encontró el archivo de datos: "%ORIGEN%"
+    echo Data file not found: "%ORIGEN%"
     pause
     exit /b 1
 )
 
 for /f "usebackq delims=" %%i in (`powershell.exe -NoProfile -Command "Get-Date -Format 'yyyy-MM-dd_HHmm'"`) do set "FECHA=%%i"
 if not defined FECHA (
-    echo No se pudo obtener la fecha para nombrar el respaldo.
+    echo Could not get the date for the backup file name.
     pause
     exit /b 1
 )
@@ -19,7 +19,7 @@ if not defined FECHA (
 set "CARPETA=%USERPROFILE%\Documents\MangoNota-respaldos"
 if not exist "%CARPETA%" mkdir "%CARPETA%"
 if errorlevel 1 (
-    echo No se pudo crear la carpeta de respaldos.
+    echo Could not create the backup folder.
     pause
     exit /b 1
 )
@@ -27,11 +27,11 @@ if errorlevel 1 (
 set "DESTINO=%CARPETA%\datos_acopio_%FECHA%.json"
 copy /Y "%ORIGEN%" "%DESTINO%" >nul
 if errorlevel 1 (
-    echo No se pudo copiar el archivo de datos.
+    echo Could not copy the data file.
     pause
     exit /b 1
 )
 
-echo Respaldo guardado en:
+echo Backup saved to:
 echo %DESTINO%
 pause
