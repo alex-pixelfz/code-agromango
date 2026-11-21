@@ -1,8 +1,8 @@
 # MangoNota
 
-MangoNota es un cuaderno digital para acopiadores de mango. Busca ayudar a llevar con claridad los datos de los productores y, en las siguientes etapas, las entregas de mango, los pagos y las canastillas. Reemplaza parte de las anotaciones que hoy se hacen en cuadernos de papel y pueden perderse o tener errores.
+MangoNota es un cuaderno digital para acopiadores de mango. Permite organizar los datos de los productores, registrar las entregas de mango, los abonos y las canastillas pendientes. Ayuda a reemplazar anotaciones en papel que pueden perderse o tener errores.
 
-> **Estado actual:** la aplicación guarda usuarios y clientes en un archivo JSON local. La web actual es una página sencilla de registro, inicio de sesión y práctica de áreas; aún no tiene pantallas para administrar clientes.
+> **Estado actual:** la aplicación guarda usuarios, clientes y los movimientos en un archivo JSON local. La web permite registrar entregas de mango, abonos a la cuenta del cliente y devoluciones de canastillas, y consultar los saldos.
 
 ## Requisitos
 
@@ -42,13 +42,16 @@ Si tu carpeta Documentos se sincroniza con OneDrive u otra nube, las copias de r
 ## Qué funciona hoy
 
 - **Registro e inicio de sesión** desde la página web. Las contraseñas se guardan protegidas mediante hash y el inicio de sesión limita los intentos fallidos.
-- **Clientes en la API:** permite crearlos, buscarlos por nombre, consultarlos, editarlos y archivarlos o reactivarlos cambiando `activo`. Cada usuario solo consulta y modifica sus propios clientes. Estas operaciones aún no tienen pantallas en la web.
+- **Clientes:** la web permite crearlos, buscarlos por nombre, editarlos y archivarlos o reactivarlos. Cada usuario solo consulta y modifica sus propios clientes.
+- **Entregas de mango:** registra cliente, tipo y calidad del mango, peso, precio por kilo, canastillas prestadas y fecha. El servidor calcula el total en pesos enteros.
+- **Cuentas de clientes:** los abonos se registran contra la cuenta completa del productor. Calcula cuánto falta por pagar y cuántas canastillas debe; permite anular entregas, abonos y devoluciones dejando el motivo en el historial.
+- **Consultas y comprobantes:** muestra las cuentas con saldo, sugiere el tipo, calidad y precio de la última entrega vigente, y prepara un comprobante para WhatsApp.
 - **Áreas:** la página de práctica permite listar y crear áreas con sesión. Sus datos siguen en memoria y se pierden al reiniciar el servidor.
-- **Web:** incluye la página de registro/inicio de sesión y la página de áreas. No es todavía una web completa para todas las tareas del acopiador.
+- **Web local:** incluye registro/inicio de sesión, un directorio de clientes y la página de áreas. La web se conecta al servidor local y los datos de usuarios y clientes quedan en el archivo JSON de este computador.
 
 ## Qué falta
 
-Todavía no están implementados el registro de entregas de mango, los abonos, las devoluciones de canastillas, los saldos ni los comprobantes por WhatsApp. MangoNota funciona sin internet en el computador donde está instalado (después de la primera instalación). Todavía no hay una versión para usar directamente en un celular.
+Todavía no hay una versión para usar directamente en un celular. Los movimientos guardados con las rutas antiguas de recogidas se conservan para consultarlos en esas rutas, pero no se convierten automáticamente al nuevo saldo por entregas. La aplicación funciona sin internet en el computador donde está instalada después de descargar por primera vez las dependencias.
 
 ## Rutas de la API
 
@@ -64,22 +67,41 @@ Las rutas protegidas requieren el encabezado `Authorization: Bearer <token>`. El
 | `GET` | `/clientes/:id` | Sí | Consultar un cliente propio |
 | `POST` | `/clientes` | Sí | Crear un cliente propio |
 | `PATCH` | `/clientes/:id` | Sí | Editar un cliente propio o cambiar su estado activo |
+| `GET` | `/clientes/:id/cuenta` | Sí | Consultar saldos y hasta 10 movimientos recientes |
+| `GET` | `/clientes/:id/sugerencias` | Sí | Obtener datos de la última entrega vigente |
+| `GET` | `/clientes/:id/comprobante?entregaId=` | Sí | Preparar texto y enlace de WhatsApp |
+| `GET` | `/cuentas` | Sí | Listar cuentas con saldo, de mayor a menor |
+| `GET` | `/entregas` | Sí | Listar entregas propias; acepta `clienteId` |
+| `POST` | `/entregas` | Sí | Registrar una entrega de mango; el servidor calcula el total |
+| `POST` | `/entregas/:id/anular` | Sí | Anular una entrega dejando el motivo |
+| `GET` | `/abonos` | Sí | Listar abonos propios; acepta `clienteId` |
+| `POST` | `/abonos` | Sí | Registrar un abono a la cuenta del cliente |
+| `POST` | `/abonos/:id/anular` | Sí | Anular un abono dejando el motivo |
+| `GET` | `/devoluciones` | Sí | Listar devoluciones propias; acepta `clienteId` |
+| `POST` | `/devoluciones` | Sí | Registrar canastillas devueltas |
+| `POST` | `/devoluciones/:id/anular` | Sí | Anular una devolución dejando el motivo |
+| `GET` | `/clientes/:id/movimientos` | Sí | Consultar recogidas, devoluciones, abonos y saldos del cliente |
+| `POST` | `/clientes/:id/movimientos/recogidas` | Sí | Registrar una recogida con fecha, canastillas y precio |
+| `POST` | `/clientes/:id/movimientos/recogidas/:recogidaId/abonos` | Sí | Guardar un abono ligado a una recogida |
+| `POST` | `/clientes/:id/movimientos/recogidas/:recogidaId/devoluciones` | Sí | Guardar una devolución de canastillas ligada a una recogida |
 
 No existe una ruta para borrar usuarios, clientes o áreas. Archivar un cliente se hace con `PATCH /clientes/:id` y `{"activo":false}`; reactivarlo, con `{"activo":true}`.
 
+Las rutas `/clientes/:id/movimientos/...` mantienen el formato anterior de recogidas; las pantallas nuevas usan `/entregas`, `/abonos` y `/devoluciones`.
+
 ## Seguridad y privacidad
 
-Las contraseñas no se guardan en texto plano; se protegen con bcrypt. El inicio de sesión aplica un límite de intentos fallidos. Las rutas de áreas y clientes piden un token, y los datos de clientes se filtran por la cuenta que inició sesión. No guardes información real innecesaria: los nombres y teléfonos de productores son datos personales. Úsalos solo para el fin de este cuaderno y no subas `backend/data/` a GitHub.
+Las contraseñas no se guardan en texto plano; se protegen con bcrypt. El inicio de sesión aplica un límite de intentos fallidos. Las rutas protegidas requieren token y los datos se filtran por la cuenta que inició sesión. No guardes información real innecesaria: los nombres y teléfonos de productores son datos personales. El repositorio es público: no subas `backend/data/` a GitHub.
 
 ## Carpetas principales
 
 ```text
-backend/                  API NestJS, autenticación, clientes y almacenamiento local
+backend/                  API NestJS, autenticación, movimientos y almacenamiento local
 backend/src/areas/        Práctica de áreas, sus datos siguen en memoria
 backend/src/auth/         Registro, inicio de sesión y guard de autenticación
 backend/src/clientes/     Rutas y reglas de clientes
 backend/src/storage/      Lectura y escritura del archivo JSON
-frontend/                 Página web estática de registro, sesión y áreas
+frontend/                 Página web estática de registro, clientes, cuentas y movimientos
 src/com/agromango/        Prototipo inicial en Java; se conserva como referencia
 ```
 
