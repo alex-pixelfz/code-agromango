@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
+import type { Response } from 'express';
 
 describe('AppController', () => {
   let appController: AppController;
@@ -8,15 +8,21 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService],
     }).compile();
 
     appController = app.get<AppController>(AppController);
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('serves the frontend login page at the root', () => {
+      let servedPath = '';
+      appController.getHome({
+        sendFile: (path: string) => {
+          servedPath = path;
+          return {} as Response;
+        },
+      } as unknown as Response);
+      expect(servedPath).toMatch(/frontend[\\/]index\.html$/);
     });
   });
 });

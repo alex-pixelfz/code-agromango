@@ -2,8 +2,20 @@
   "version": 1,
   "usuarios": [],
   "clientes": [],
+  "recogidas": [],
+  "devoluciones": [],
+  "abonos": [],
+  "entregas": [],
+  "abonosCuenta": [],
+  "devolucionesCuenta": [],
   "contadores": {
     "usuario": 1,
-    "cliente": 1
+    "cliente": 1,
+    "recogida": 1,
+    "devolucion": 1,
+    "abono": 1,
+    "entrega": 1,
+    "abonoCuenta": 1,
+    "devolucionCuenta": 1
   }
 }

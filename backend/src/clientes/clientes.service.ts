@@ -63,7 +63,7 @@ export class ClientesService {
       ? this.validarActivo(datos.activo)
       : true;
     const telefono = tieneCampo(datos, 'telefono')
-      ? this.validarTelefono(datos.telefono)
+      ? this.validarTelefonoOpcional(datos.telefono)
       : undefined;
     const vereda = tieneCampo(datos, 'vereda')
       ? this.validarVereda(datos.vereda)
@@ -94,7 +94,7 @@ export class ClientesService {
       cambios.nombre = this.validarNombre(datos.nombre);
     }
     if (tieneCampo(datos, 'telefono')) {
-      cambios.telefono = this.validarTelefono(datos.telefono);
+      cambios.telefono = this.validarTelefonoOpcional(datos.telefono);
     }
     if (tieneCampo(datos, 'vereda')) {
       cambios.vereda = this.validarVereda(datos.vereda);
@@ -111,6 +111,9 @@ export class ClientesService {
         throw new NotFoundException('Cliente no encontrado');
       }
       Object.assign(cliente, cambios);
+      if (tieneCampo(cambios, 'telefono') && cambios.telefono === undefined) {
+        delete cliente.telefono;
+      }
       return cliente;
     });
   }
@@ -152,6 +155,13 @@ export class ClientesService {
       );
     }
     return telefono;
+  }
+
+  private validarTelefonoOpcional(valor: unknown): string | undefined {
+    if (typeof valor === 'string' && valor.trim() === '') {
+      return undefined;
+    }
+    return this.validarTelefono(valor);
   }
 
   private validarVereda(valor: unknown): string {
