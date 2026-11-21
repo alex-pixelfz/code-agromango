@@ -2,6 +2,10 @@ const registerForm = document.querySelector('#register-form');
 const loginForm = document.querySelector('#login-form');
 const message = document.querySelector('#mensaje');
 
+if (sessionStorage.getItem('access_token')) {
+  window.location.replace('inicio.html');
+}
+
 function showMessage(text, isError = false) {
   message.textContent = text;
   message.classList.toggle('message-error', isError);
@@ -82,7 +86,7 @@ loginForm.addEventListener('submit', async (event) => {
     }
 
     sessionStorage.setItem('access_token', data.access_token);
-    window.location.assign('areas.html');
+    window.location.assign('inicio.html');
   } catch {
     showMessage('No se pudo conectar con el servidor. Inténtalo de nuevo.', true);
   }

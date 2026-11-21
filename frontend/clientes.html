@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#245c3b">
+    <title>MangoNota | Mis clientes</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="clientes.js" defer></script>
+  </head>
+  <body>
+    <main class="app-page">
+      <header class="app-header">
+        <a class="brand" href="inicio.html" aria-label="MangoNota, inicio">🥭 MangoNota</a>
+        <nav class="app-nav" aria-label="Navegación principal">
+          <a class="nav-link" href="inicio.html">Inicio</a>
+          <a class="nav-link nav-link-current" href="clientes.html" aria-current="page">Clientes</a>
+          <a class="nav-link" href="cuentas.html">Cuentas</a>
+          <a class="nav-link" href="entrega.html">Nueva entrega</a>
+          <a class="nav-link" href="areas.html">Áreas</a>
+          <button id="logout-button" class="button-secondary nav-logout" type="button">Cerrar sesión</button>
+        </nav>
+      </header>
+
+      <section class="welcome-panel">
+        <div>
+          <p class="eyebrow">TU CUADERNO DIGITAL</p>
+          <h1>Mis clientes</h1>
+          <p class="intro">Guarda y encuentra fácilmente los datos de tus productores.</p>
+        </div>
+        <button id="new-client-button" class="new-client-button" type="button">+ Agregar cliente</button>
+      </section>
+
+      <section class="client-summary" aria-label="Resumen de clientes">
+        <article class="summary-card">
+          <span class="summary-icon" aria-hidden="true">👥</span>
+          <div>
+            <p class="summary-label">Clientes visibles</p>
+            <p id="client-count" class="summary-value">0</p>
+          </div>
+        </article>
+        <p class="local-note"><span aria-hidden="true">●</span> Tus datos se guardan en este computador</p>
+      </section>
+
+      <section class="client-section" aria-labelledby="client-list-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="client-list-title">Directorio</h2>
+            <p class="section-hint">Busca por nombre y administra tus clientes.</p>
+          </div>
+        </div>
+
+        <div class="client-tools">
+          <form id="search-form" class="search-form" role="search">
+            <label class="sr-only" for="client-search">Buscar cliente por nombre</label>
+            <input id="client-search" name="buscar" type="search" placeholder="Buscar por nombre..." autocomplete="off">
+            <button type="submit" class="search-button">Buscar</button>
+          </form>
+          <label class="inactive-toggle" for="show-inactive">
+            <input id="show-inactive" type="checkbox">
+            Incluir archivados
+          </label>
+        </div>
+
+        <p id="clients-message" class="message" role="status" aria-live="polite"></p>
+        <ul id="client-list" class="client-list" aria-live="polite"></ul>
+      </section>
+
+      <dialog id="client-dialog" class="client-dialog" aria-labelledby="dialog-title">
+        <form id="client-form" class="client-form">
+          <div class="dialog-heading">
+            <div>
+              <p class="eyebrow">DIRECTORIO</p>
+              <h2 id="dialog-title">Agregar cliente</h2>
+            </div>
+            <button id="close-dialog-button" class="icon-button" type="button" aria-label="Cerrar formulario">×</button>
+          </div>
+
+          <label for="client-name">Nombre completo <span aria-hidden="true">*</span></label>
+          <input id="client-name" name="nombre" type="text" minlength="2" maxlength="80" autocomplete="name" required>
+
+          <label for="client-phone">Celular <span class="optional-label">(opcional)</span></label>
+          <input id="client-phone" name="telefono" type="tel" inputmode="numeric" maxlength="12" placeholder="Ej. 3001234567" autocomplete="tel">
+          <small class="field-hint">Celular colombiano de 10 dígitos que empiece por 3.</small>
+
+          <label for="client-village">Vereda <span class="optional-label">(opcional)</span></label>
+          <input id="client-village" name="vereda" type="text" maxlength="60" autocomplete="address-level3">
+
+          <p id="form-message" class="form-message" role="alert"></p>
+          <div class="dialog-actions">
+            <button id="cancel-dialog-button" class="button-secondary" type="button">Cancelar</button>
+            <button id="save-client-button" type="submit">Guardar cliente</button>
+          </div>
+        </form>
+      </dialog>
+
+      <footer class="app-footer">
+        <p>Trabaja con calma: los datos de tus clientes solo los ves tú.</p>
+      </footer>
+    </main>
+  </body>
+</html>

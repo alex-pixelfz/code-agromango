@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MangoNota | Cuenta del cliente</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="cuenta.js" defer></script>
+  </head>
+  <body>
+    <main class="app-page">
+      <header class="app-header">
+        <a class="brand" href="inicio.html">🥭 MangoNota</a>
+        <nav class="app-nav">
+          <a class="nav-link" href="inicio.html">Inicio</a>
+          <a class="nav-link" href="clientes.html">Mis clientes</a>
+          <a class="nav-link" href="cuentas.html">Cuentas</a>
+          <button id="logout-button" class="button-secondary nav-logout" type="button">Cerrar sesión</button>
+        </nav>
+      </header>
+      <a class="back-link" href="clientes.html">← Volver a mis clientes</a>
+      <section class="account-heading">
+        <div>
+          <p class="eyebrow">CUENTA DEL PRODUCTOR</p>
+          <h1 id="client-name">Cargando cliente…</h1>
+          <p id="client-contact" class="intro"></p>
+        </div>
+        <p id="archived-notice" class="archived-notice" hidden>Cliente archivado: no admite movimientos nuevos.</p>
+      </section>
+      <section class="balance-grid" aria-label="Saldos del cliente">
+        <article class="balance-card balance-card-primary">
+          <span class="balance-label">Falta por pagar</span>
+          <strong id="money-balance" class="balance-value">$0</strong>
+          <span class="balance-context">Entregas menos abonos</span>
+        </article>
+        <article class="balance-card">
+          <span class="balance-label">Canastillas que debe</span>
+          <strong id="basket-balance" class="balance-value">0</strong>
+          <span class="balance-context">Prestadas menos devueltas</span>
+        </article>
+        <article class="balance-card">
+          <span class="balance-label">Total abonado</span>
+          <strong id="total-paid" class="balance-value">$0</strong>
+          <span class="balance-context">Abonos no anulados</span>
+        </article>
+      </section>
+      <nav class="account-actions" aria-label="Movimientos del cliente">
+        <a id="new-delivery-link" class="home-action home-action-primary" href="entrega.html">Nueva entrega</a>
+        <a class="home-action" href="#abono-form">Registrar abono</a>
+        <a class="home-action" href="#return-form">Devolvieron canastillas</a>
+        <a id="share-account" class="home-action" target="_blank" rel="noopener noreferrer">Enviar cuenta por WhatsApp</a>
+      </nav>
+      <section id="movement-forms" class="forms account-forms">
+        <form id="abono-form" class="card">
+          <h2>Registrar abono</h2>
+          <label for="abono-amount">Valor recibido (pesos)</label>
+          <input id="abono-amount" type="number" min="1" step="1" inputmode="numeric" required>
+          <label for="abono-date">Fecha del abono</label>
+          <input id="abono-date" type="date" required>
+          <p id="abono-message" class="form-message" role="status"></p>
+          <button type="submit">Guardar abono</button>
+        </form>
+        <form id="return-form" class="card">
+          <h2>Devolvieron canastillas</h2>
+          <label for="return-amount">Cantidad devuelta</label>
+          <input id="return-amount" type="number" min="1" step="1" inputmode="numeric" required>
+          <label for="return-date">Fecha de devolución</label>
+          <input id="return-date" type="date" required>
+          <p id="return-message" class="form-message" role="status"></p>
+          <button type="submit">Guardar devolución</button>
+        </form>
+      </section>
+      <section class="ledger-section">
+        <h2>Movimientos recientes</h2>
+        <p class="section-hint">Los movimientos anulados siguen anotados y no cuentan en los saldos.</p>
+        <p id="account-message" class="message" role="status"></p>
+        <ul id="movement-list" class="movement-list"></ul>
+      </section>
+    </main>
+  </body>
+</html>

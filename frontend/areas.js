@@ -32,7 +32,7 @@ if (!token) {
 
   function handleUnauthorized() {
     sessionStorage.removeItem('access_token');
-    sessionStorage.setItem('auth_message', 'Tu sesión venció, inicia sesión de nuevo');
+    sessionStorage.setItem('auth_message', 'Tu sesión venció, entra de nuevo');
     window.location.replace('index.html');
   }
 

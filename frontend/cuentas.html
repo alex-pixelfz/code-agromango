@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MangoNota | Cuentas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="cuentas.js" defer></script>
+  </head>
+  <body>
+    <main class="app-page">
+      <header class="app-header">
+        <a class="brand" href="inicio.html">🥭 MangoNota</a>
+        <nav class="app-nav">
+          <a class="nav-link" href="inicio.html">Inicio</a>
+          <a class="nav-link" href="clientes.html">Mis clientes</a>
+          <a class="nav-link nav-link-current" href="cuentas.html">Cuentas</a>
+          <button id="logout-button" class="button-secondary nav-logout" type="button">Cerrar sesión</button>
+        </nav>
+      </header>
+      <section class="welcome-panel">
+        <div>
+          <p class="eyebrow">SALDOS PENDIENTES</p>
+          <h1>¿A quién falta por pagar?</h1>
+          <p class="intro">Las cuentas con mayor saldo aparecen primero.</p>
+        </div>
+      </section>
+      <p id="accounts-message" class="message" role="status"></p>
+      <ul id="accounts-list" class="client-list"></ul>
+    </main>
+  </body>
+</html>

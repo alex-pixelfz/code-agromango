@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MangoNota | Nueva entrega</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="entrega.js" defer></script>
+  </head>
+  <body>
+    <main class="app-page">
+      <header class="app-header">
+        <a class="brand" href="inicio.html">🥭 MangoNota</a>
+        <nav class="app-nav">
+          <a class="nav-link" href="inicio.html">Inicio</a>
+          <a class="nav-link" href="clientes.html">Mis clientes</a>
+          <a class="nav-link" href="cuentas.html">Cuentas</a>
+          <button id="logout-button" class="button-secondary nav-logout" type="button">Cerrar sesión</button>
+        </nav>
+      </header>
+      <a class="back-link" href="inicio.html">← Volver al inicio</a>
+      <section class="client-section delivery-panel">
+        <p class="eyebrow">NUEVA ENTREGA</p>
+        <h1>Registrar mango recibido</h1>
+        <p class="section-hint">El total se calcula aquí y queda anotada la fecha de compra o recogida.</p>
+        <form id="delivery-form">
+          <label for="delivery-client">1. Elige el cliente</label>
+          <select id="delivery-client" required>
+            <option value="">Cargando clientes…</option>
+          </select>
+          <h2>2. Datos de la entrega</h2>
+          <label for="delivery-type">Tipo de mango</label>
+          <input id="delivery-type" type="text" minlength="2" maxlength="40" required>
+          <label for="delivery-quality">Calidad</label>
+          <select id="delivery-quality" required>
+            <option value="PRIMERA">Primera</option>
+            <option value="SEGUNDA">Segunda</option>
+            <option value="TERCERA">Tercera</option>
+          </select>
+          <label for="delivery-weight">Peso en kilos</label>
+          <input id="delivery-weight" type="text" inputmode="decimal" placeholder="Ej. 120,50" required>
+          <label for="delivery-price">Precio por kilo (pesos)</label>
+          <input id="delivery-price" type="number" min="1" max="1000000" step="1" inputmode="numeric" required>
+          <label for="delivery-baskets">Canastillas prestadas</label>
+          <input id="delivery-baskets" type="number" min="0" max="10000" step="1" inputmode="numeric" value="0" required>
+          <label for="delivery-date">Fecha de compra o recogida</label>
+          <input id="delivery-date" type="date">
+          <h2>3. Revisa el total y guarda</h2>
+          <p id="delivery-total" class="delivery-total">Total: $0</p>
+          <p id="delivery-message" class="message" role="status" aria-live="polite"></p>
+          <button id="save-delivery" type="submit">Revisar y guardar entrega</button>
+        </form>
+        <section id="delivery-done" class="success-panel" hidden>
+          <h2>Entrega guardada</h2>
+          <p id="delivery-result"></p>
+          <a id="whatsapp-link" class="home-action home-action-primary" target="_blank" rel="noopener noreferrer">Enviar comprobante por WhatsApp</a>
+          <button id="another-delivery" type="button">Registrar otra</button>
+          <a id="delivery-account" class="action-button" href="#">Ver cuenta del cliente</a>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
